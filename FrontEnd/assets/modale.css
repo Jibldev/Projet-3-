@@ -158,7 +158,7 @@
 
 /* Bouton d'upload photo */
 #photo-upload-container {
-  display: flex; /* Utilise Flexbox pour l'alignement */
+  display: relative; /* Utilise Flexbox pour l'alignement */
   flex-direction: column; /* Aligne les éléments verticalement */
   justify-content: center; /* Centre les éléments verticalement */
   align-items: center; /* Centre les éléments horizontalement */
@@ -187,13 +187,16 @@
 }
 
 #photo-upload-container img {
-  display: block !important;
-  max-width: 129px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 100%;
   max-height: 100%;
-  object-fit: contain; /* Préserve les proportions de l'image */
-  border: none !important; /* Supprime toute bordure */
-  outline: none; /* Supprime tout contour */
+  object-fit: cover; /* Pour couvrir l'espace sans déformation */
 }
+
+
 
 /* Icône à l'intérieur du bouton */
 .upload-photo-button i {
@@ -273,6 +276,8 @@
 #photo-category:focus {
   border-color: #1d6154;
 }
+
+
 
 /* Bouton Valider */
 #add-photo-form button[type="button"] {

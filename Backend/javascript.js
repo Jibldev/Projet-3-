@@ -48,8 +48,12 @@ document.addEventListener("DOMContentLoaded", async function () {
   const closeOtherModalButton = document.getElementById("close-add-photo");
   const filtersContainer = document.getElementById("filters");
   const photoGallery = document.getElementById("photo-gallery");
-
-
+  const validerButton = document.getElementById("valider-button");
+  const photoUploadInput = document.getElementById("photo-upload");
+  const previewContainer = document.getElementById("photo-upload-container");
+  const photoUploadLabel = document.getElementById("photo-upload-label");
+  const titleInput = document.getElementById("photo-title");
+  const categorySelect = document.getElementById("photo-category");
 
   // Vérification des éléments DOM
   if (
@@ -61,32 +65,33 @@ document.addEventListener("DOMContentLoaded", async function () {
     !closeOtherModalButton ||
     !addPhotoPage ||
     !filtersContainer ||
-    !photoGallery
+    !photoGallery ||
+    !validerButton ||
+    !photoUploadInput ||
+    !previewContainer ||
+    !photoUploadLabel ||
+    !titleInput ||
+    !categorySelect
   ) {
-    console.error("Certains éléments du DOM sont introuvables. Vérifiez vos IDs.");
+    console.error(
+      "Certains éléments du DOM sont introuvables. Vérifiez vos IDs."
+    );
     return;
   }
 
-  // Création de l'overlay pour la deuxième modale
-  const addPhotoOverlay = document.createElement("div");
-  addPhotoOverlay.classList.add("add-photo-overlay");
-  document.body.appendChild(addPhotoOverlay);
-  addPhotoOverlay.style.display = "none"; // Masquer l'overlay au début
+ // Classe Modale
+ class Modale {
+  constructor(modaleElement, boutonFermer, overlayElement = null) {
+    this.modaleElement = modaleElement;
+    this.boutonFermer = boutonFermer;
+    this.overlayElement = overlayElement;
 
-  // Masquer les modales au chargement de la page
-  changerVisibilite([editModal, addPhotoPage], "none");
+    if (this.boutonFermer) {
+      this.boutonFermer.addEventListener("click", () => this.fermer());
+    }
 
-  // Classe Modale
-  class Modale {
-    constructor(modaleElement, boutonFermer) {
-      this.modaleElement = modaleElement;
-      this.boutonFermer = boutonFermer;
-
-      if (this.boutonFermer) {
-        this.boutonFermer.addEventListener("click", () => this.fermer());
-      }
-
-      // Fermer la modale en cliquant en dehors de la zone
+    // Fermer la modale en cliquant en dehors de la zone de la modale pour la première modale
+    if (!this.overlayElement) {
       this.modaleElement.addEventListener("click", (event) => {
         if (event.target === this.modaleElement) {
           console.log("Clic en dehors de la modale - Fermeture");
@@ -95,54 +100,187 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
     }
 
-    ouvrir() {
-      this.modaleElement.style.display = "flex";
-    }
-
-    fermer() {
-      this.modaleElement.style.display = "none";
+    // Fermer la modale en cliquant sur l'overlay pour la deuxième modale
+    if (this.overlayElement) {
+      this.overlayElement.addEventListener("click", (event) => {
+        if (event.target === this.overlayElement) {
+          console.log("Clic sur l'overlay - Fermeture");
+          this.fermer();
+        }
+      });
     }
   }
 
-  // Instancier les modales
-  const modaleEdition = new Modale(editModal, closeMainModalButton);
-  const modaleAjoutPhoto = new Modale(addPhotoOverlay, closeOtherModalButton);
-
-  // Ouverture de la première modale (édition)
-  editButton.addEventListener("click", async () => {
-    modaleEdition.ouvrir();
-    addPhotoPage.style.display = "none";
-    await afficherGalerieModale(); // Charger la galerie
-  });
-
-  // Ouverture de la deuxième modale (ajouter une photo)
-  openAddPhotoButton.addEventListener("click", () => {
-    console.log("Bouton Ajouter une photo cliqué");
-
-    // Ajouter la modale "Ajouter une photo" à l'overlay
-    if (!addPhotoOverlay.contains(addPhotoPage)) {
-      addPhotoOverlay.appendChild(addPhotoPage);
+  ouvrir() {
+    if (this.overlayElement) {
+      this.overlayElement.style.display = "flex";
     }
+    this.modaleElement.style.display = "flex";
+  }
 
-    // Afficher l'overlay et la deuxième modale
-    addPhotoOverlay.style.display = "flex";
-    addPhotoPage.style.display = "flex";
-    modaleEdition.fermer();
+  fermer() {
+    if (this.overlayElement) {
+      this.overlayElement.style.display = "none";
+    }
+    this.modaleElement.style.display = "none";
+  }
+}
 
-    // Gestion du clic en dehors pour fermer la deuxième modale
-    addPhotoOverlay.addEventListener("click", (event) => {
-      if (event.target === addPhotoOverlay) {
-        modaleAjoutPhoto.fermer();
-      }
-    });
-  });
+// Création de l'overlay pour la deuxième modale
+const addPhotoOverlay = document.createElement("div");
+addPhotoOverlay.classList.add("add-photo-overlay");
+document.body.appendChild(addPhotoOverlay);
+addPhotoOverlay.style.display = "none"; // Masquer l'overlay au début
+
+// Instancier les modales
+const modaleEdition = new Modale(editModal, closeMainModalButton);
+const modaleAjoutPhoto = new Modale(addPhotoPage, closeOtherModalButton, addPhotoOverlay);
+
+// Ouverture de la première modale (édition)
+editButton.addEventListener("click", async () => {
+  modaleEdition.ouvrir();
+  addPhotoPage.style.display = "none";
+  await afficherGalerieModale(); // Charger la galerie
+});
+
+// Ouverture de la deuxième modale (ajouter une photo)
+openAddPhotoButton.addEventListener("click", () => {
+  console.log("Bouton Ajouter une photo cliqué");
+
+  // Ajouter la modale "Ajouter une photo" à l'overlay si ce n'est pas déjà fait
+  if (!addPhotoOverlay.contains(addPhotoPage)) {
+    addPhotoOverlay.appendChild(addPhotoPage);
+  }
+
+  // Afficher l'overlay et la deuxième modale
+  modaleAjoutPhoto.ouvrir();
+
+  // Masquer la première modale
+  modaleEdition.fermer();
+});
+
 
   // Retour à la galerie depuis la deuxième modale
   backToGalleryButton.addEventListener("click", () => {
     console.log("Bouton Retour cliqué");
     modaleAjoutPhoto.fermer(); // Masquer la deuxième modale
     modaleEdition.ouvrir(); // Réafficher la première modale
+    addPhotoOverlay.style.display = "none"; // Masquer l'overlay
+
+    // Réinitialiser l'image de prévisualisation
+    const previewImage = previewContainer.querySelector("img");
+    if (previewImage) {
+      previewContainer.removeChild(previewImage);
+    }
+
+    // Réafficher le label d'upload
+    photoUploadLabel.style.display = "flex";
+
+    // Réinitialiser le champ titre
+    titleInput.value = "";
+
+    // Réinitialiser le select des catégories
+    categorySelect.selectedIndex = -1;
+
+    // Désactiver le bouton Valider
+    toggleValiderButton();
   });
+
+  // Activer/désactiver le bouton Valider selon l'état des champs du formulaire
+  function toggleValiderButton() {
+    const titleInputValue = titleInput.value.trim();
+    const categorySelectedIndex = categorySelect.selectedIndex;
+    const previewImage = previewContainer.querySelector('img');
+
+    if (titleInputValue !== "" && categorySelectedIndex !== -1 && previewImage) {
+      validerButton.style.backgroundColor = "#2f544e";
+      validerButton.style.color = "white";
+      validerButton.style.cursor = "pointer";
+      validerButton.disabled = false;
+    } else {
+      validerButton.style.backgroundColor = "#b8b8b8";
+      validerButton.style.color = "white";
+      validerButton.style.cursor = "not-allowed";
+      validerButton.disabled = true;
+    }
+  }
+
+  // Ajouter les écouteurs d'événements nécessaires pour la validation du formulaire
+  titleInput.addEventListener("input", toggleValiderButton);
+  categorySelect.addEventListener("change", toggleValiderButton);
+  photoUploadInput.addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      // Vérifier que le fichier est bien une image .png ou .jpeg
+      const validTypes = ["image/jpeg", "image/png"];
+      if (!validTypes.includes(file.type)) {
+        alert("Veuillez sélectionner une image au format .jpeg ou .png.");
+        return;
+      }
+
+      // Lire le fichier sélectionné
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = new Image();
+        img.src = e.target.result;
+
+        // Attendre que l'image soit chargée pour la redimensionner
+        img.onload = function () {
+          // Créer un canvas pour redimensionner l'image
+          const canvas = document.createElement("canvas");
+          canvas.width = 366.66; // Largeur cible
+          canvas.height = 511.89; // Hauteur cible
+
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // Convertir le canvas en dataURL et afficher l'aperçu
+          const resizedImageUrl = canvas.toDataURL("image/jpeg");
+
+          // Créer ou remplacer l'image d'aperçu
+          let previewImage = previewContainer.querySelector("img");
+          if (!previewImage) {
+            previewImage = document.createElement("img");
+            previewContainer.appendChild(previewImage);
+          }
+          previewImage.src = resizedImageUrl;
+
+          // Cacher le label d'upload lorsque l'image est en prévisualisation
+          photoUploadLabel.style.display = "none";
+
+          // Vérifier si tous les champs du formulaire sont remplis pour activer le bouton Valider
+          toggleValiderButton();
+        };
+      };
+
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Récupérer les catégories depuis l'API et les ajouter au select des catégories
+  try {
+    const response = await fetch("http://localhost:5678/api/categories");
+    if (!response.ok) {
+      throw new Error("Erreur lors de la récupération des catégories");
+    }
+    const categories = await response.json();
+
+    // Ajouter chaque catégorie comme option dans le select
+    categories.forEach((category) => {
+      const option = document.createElement("option");
+      option.value = category.id;
+      option.textContent = category.name;
+      categorySelect.appendChild(option);
+    });
+
+    // Ne rien sélectionner par défaut
+    categorySelect.selectedIndex = -1;
+  } catch (error) {
+    console.error("Erreur :", error);
+  }
+
+  // Appeler toggleValiderButton pour initialiser l'état du bouton Valider
+  toggleValiderButton();
 
   // Fonction utilitaire pour changer la visibilité des éléments
   function changerVisibilite(elements, affichage) {
@@ -191,7 +329,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         filtersContainer.appendChild(button);
       });
     } catch (error) {
-      console.error("Erreur lors de l'initialisation des boutons de filtres :", error);
+      console.error(
+        "Erreur lors de l'initialisation des boutons de filtres :",
+        error
+      );
     }
   }
 
@@ -245,13 +386,14 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 });
 
-// Suppresion des images 
+// Suppresion des images
 
-// Fonction pour remplir la galerie de la modale principale avec des images
 // Fonction pour remplir la galerie de la modale principale avec des images
 async function afficherGalerieModale() {
   try {
-    const modalGalleryContainer = document.querySelector("#photo-gallery-modale");
+    const modalGalleryContainer = document.querySelector(
+      "#photo-gallery-modale"
+    );
     const photoGalleryContainer = document.querySelector("#photo-gallery"); // Conteneur de la galerie sur la page principale
 
     if (!modalGalleryContainer) {
@@ -292,13 +434,16 @@ async function afficherGalerieModale() {
       deleteButton.addEventListener("click", async () => {
         try {
           // Envoyer une requête DELETE à l'API pour supprimer le projet
-          const response = await fetch(`http://localhost:5678/api/works/${projet.id}`, {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+          const response = await fetch(
+            `http://localhost:5678/api/works/${projet.id}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+              },
             }
-          });
+          );
 
           if (response.ok) {
             console.log(`Projet ${projet.id} supprimé avec succès.`);
@@ -306,15 +451,22 @@ async function afficherGalerieModale() {
             figure.remove();
 
             // Supprimer également l'élément correspondant de la galerie principale
-            const mainGalleryFigure = document.querySelector(`#photo-gallery figure[data-id="${projet.id}"]`);
+            const mainGalleryFigure = document.querySelector(
+              `#photo-gallery figure[data-id="${projet.id}"]`
+            );
             if (mainGalleryFigure) {
               mainGalleryFigure.remove();
             }
           } else {
-            console.error(`Erreur lors de la suppression du projet ${projet.id}.`);
+            console.error(
+              `Erreur lors de la suppression du projet ${projet.id}.`
+            );
           }
         } catch (error) {
-          console.error(`Erreur lors de la suppression du projet ${projet.id} :`, error);
+          console.error(
+            `Erreur lors de la suppression du projet ${projet.id} :`,
+            error
+          );
         }
       });
 
@@ -333,5 +485,3 @@ async function afficherGalerieModale() {
     console.error("Erreur lors de la récupération des projets :", error);
   }
 }
-
-
