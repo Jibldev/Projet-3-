@@ -152,8 +152,17 @@ openAddPhotoButton.addEventListener("click", () => {
     addPhotoOverlay.appendChild(addPhotoPage);
   }
 
+  // Réinitialiser le champ d'upload et la prévisualisation de l'image
+  const previewImage = previewContainer.querySelector('img');
+  if (previewImage) {
+    previewContainer.removeChild(previewImage);
+  }
+  photoUploadInput.value = ""; // Réinitialiser l'input file
+  photoUploadLabel.style.display = "flex"; // Réafficher le label d'upload
+
   // Afficher l'overlay et la deuxième modale
-  modaleAjoutPhoto.ouvrir();
+  addPhotoOverlay.style.display = "flex";
+  addPhotoPage.style.display = "flex";
 
   // Masquer la première modale
   modaleEdition.fermer();
@@ -166,12 +175,6 @@ openAddPhotoButton.addEventListener("click", () => {
     modaleAjoutPhoto.fermer(); // Masquer la deuxième modale
     modaleEdition.ouvrir(); // Réafficher la première modale
     addPhotoOverlay.style.display = "none"; // Masquer l'overlay
-
-    // Réinitialiser l'image de prévisualisation
-    const previewImage = previewContainer.querySelector("img");
-    if (previewImage) {
-      previewContainer.removeChild(previewImage);
-    }
 
     // Réafficher le label d'upload
     photoUploadLabel.style.display = "flex";
