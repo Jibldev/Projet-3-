@@ -79,95 +79,109 @@ document.addEventListener("DOMContentLoaded", async function () {
     return;
   }
 
- // Classe Modale
- class Modale {
-  constructor(modaleElement, boutonFermer, overlayElement = null) {
-    this.modaleElement = modaleElement;
-    this.boutonFermer = boutonFermer;
-    this.overlayElement = overlayElement;
+  // Classe Modale
 
-    if (this.boutonFermer) {
-      this.boutonFermer.addEventListener("click", () => this.fermer());
+  
+  class Modale {
+    constructor(modaleElement, boutonFermer, overlayElement = null) {
+      this.modaleElement = modaleElement;
+      this.boutonFermer = boutonFermer;
+      this.overlayElement = overlayElement;
+
+      if (this.boutonFermer) {
+        this.boutonFermer.addEventListener("click", () => this.fermer());
+      }
+
+      // Fermer la modale en cliquant en dehors de la zone de la modale pour la première modale
+      if (!this.overlayElement) {
+        this.modaleElement.addEventListener("click", (event) => {
+          if (event.target === this.modaleElement) {
+            console.log("Clic en dehors de la modale - Fermeture");
+            this.fermer();
+          }
+        });
+      }
+
+      // Fermer la modale en cliquant sur l'overlay pour la deuxième modale
+      if (this.overlayElement) {
+        this.overlayElement.addEventListener("click", (event) => {
+          if (event.target === this.overlayElement) {
+            console.log("Clic sur l'overlay - Fermeture");
+            this.fermer();
+          }
+        });
+      }
     }
 
-    // Fermer la modale en cliquant en dehors de la zone de la modale pour la première modale
-    if (!this.overlayElement) {
-      this.modaleElement.addEventListener("click", (event) => {
-        if (event.target === this.modaleElement) {
-          console.log("Clic en dehors de la modale - Fermeture");
-          this.fermer();
-        }
-      });
+    ouvrir() {
+      if (this.overlayElement) {
+        this.overlayElement.style.display = "flex";
+      }
+      this.modaleElement.style.display = "flex";
     }
 
-    // Fermer la modale en cliquant sur l'overlay pour la deuxième modale
-    if (this.overlayElement) {
-      this.overlayElement.addEventListener("click", (event) => {
-        if (event.target === this.overlayElement) {
-          console.log("Clic sur l'overlay - Fermeture");
-          this.fermer();
-        }
-      });
+    fermer() {
+      if (this.overlayElement) {
+        this.overlayElement.style.display = "none";
+      }
+      this.modaleElement.style.display = "none";
     }
   }
 
-  ouvrir() {
-    if (this.overlayElement) {
-      this.overlayElement.style.display = "flex";
+  // Création de l'overlay pour la deuxième modale
+  const addPhotoOverlay = document.createElement("div");
+  addPhotoOverlay.classList.add("add-photo-overlay");
+  document.body.appendChild(addPhotoOverlay);
+  addPhotoOverlay.style.display = "none"; // Masquer l'overlay au début
+
+  // Instancier les modales
+  const modaleEdition = new Modale(editModal, closeMainModalButton);
+  const modaleAjoutPhoto = new Modale(
+    addPhotoPage,
+    closeOtherModalButton,
+    addPhotoOverlay
+  );
+
+  // Ouverture de la première modale (édition)
+  editButton.addEventListener("click", async () => {
+    modaleEdition.ouvrir();
+    addPhotoPage.style.display = "none";
+    await afficherGalerieModale(); // Charger la galerie
+  });
+
+  // Ouverture de la deuxième modale (ajouter une photo)
+  openAddPhotoButton.addEventListener("click", () => {
+    console.log("Bouton Ajouter une photo cliqué");
+
+    // Ajouter la modale "Ajouter une photo" à l'overlay si ce n'est pas déjà fait
+    if (!addPhotoOverlay.contains(addPhotoPage)) {
+      addPhotoOverlay.appendChild(addPhotoPage);
     }
-    this.modaleElement.style.display = "flex";
-  }
 
-  fermer() {
-    if (this.overlayElement) {
-      this.overlayElement.style.display = "none";
+    // Réinitialiser le champ d'upload et la prévisualisation de l'image
+    const previewImage = previewContainer.querySelector("img");
+    if (previewImage) {
+      previewContainer.removeChild(previewImage);
     }
-    this.modaleElement.style.display = "none";
-  }
-}
+    photoUploadInput.value = ""; // Réinitialiser l'input file
+    photoUploadLabel.style.display = "flex"; // Réafficher le label d'upload
 
-// Création de l'overlay pour la deuxième modale
-const addPhotoOverlay = document.createElement("div");
-addPhotoOverlay.classList.add("add-photo-overlay");
-document.body.appendChild(addPhotoOverlay);
-addPhotoOverlay.style.display = "none"; // Masquer l'overlay au début
+        // Réafficher le label d'upload
+        photoUploadLabel.style.display = "flex";
 
-// Instancier les modales
-const modaleEdition = new Modale(editModal, closeMainModalButton);
-const modaleAjoutPhoto = new Modale(addPhotoPage, closeOtherModalButton, addPhotoOverlay);
+        // Réinitialiser le champ titre
+        titleInput.value = "";
 
-// Ouverture de la première modale (édition)
-editButton.addEventListener("click", async () => {
-  modaleEdition.ouvrir();
-  addPhotoPage.style.display = "none";
-  await afficherGalerieModale(); // Charger la galerie
-});
+            // Réinitialiser le select des catégories
+    categorySelect.selectedIndex = -1;
 
-// Ouverture de la deuxième modale (ajouter une photo)
-openAddPhotoButton.addEventListener("click", () => {
-  console.log("Bouton Ajouter une photo cliqué");
+    // Afficher l'overlay et la deuxième modale
+    addPhotoOverlay.style.display = "flex";
+    addPhotoPage.style.display = "flex";
 
-  // Ajouter la modale "Ajouter une photo" à l'overlay si ce n'est pas déjà fait
-  if (!addPhotoOverlay.contains(addPhotoPage)) {
-    addPhotoOverlay.appendChild(addPhotoPage);
-  }
-
-  // Réinitialiser le champ d'upload et la prévisualisation de l'image
-  const previewImage = previewContainer.querySelector('img');
-  if (previewImage) {
-    previewContainer.removeChild(previewImage);
-  }
-  photoUploadInput.value = ""; // Réinitialiser l'input file
-  photoUploadLabel.style.display = "flex"; // Réafficher le label d'upload
-
-  // Afficher l'overlay et la deuxième modale
-  addPhotoOverlay.style.display = "flex";
-  addPhotoPage.style.display = "flex";
-
-  // Masquer la première modale
-  modaleEdition.fermer();
-});
-
+    // Masquer la première modale
+    modaleEdition.fermer();
+  });
 
   // Retour à la galerie depuis la deuxième modale
   backToGalleryButton.addEventListener("click", () => {
@@ -188,25 +202,6 @@ openAddPhotoButton.addEventListener("click", () => {
     // Désactiver le bouton Valider
     toggleValiderButton();
   });
-
-  // Activer/désactiver le bouton Valider selon l'état des champs du formulaire
-  function toggleValiderButton() {
-    const titleInputValue = titleInput.value.trim();
-    const categorySelectedIndex = categorySelect.selectedIndex;
-    const previewImage = previewContainer.querySelector('img');
-
-    if (titleInputValue !== "" && categorySelectedIndex !== -1 && previewImage) {
-      validerButton.style.backgroundColor = "#2f544e";
-      validerButton.style.color = "white";
-      validerButton.style.cursor = "pointer";
-      validerButton.disabled = false;
-    } else {
-      validerButton.style.backgroundColor = "#b8b8b8";
-      validerButton.style.color = "white";
-      validerButton.style.cursor = "not-allowed";
-      validerButton.disabled = true;
-    }
-  }
 
   // Ajouter les écouteurs d'événements nécessaires pour la validation du formulaire
   titleInput.addEventListener("input", toggleValiderButton);
@@ -488,3 +483,186 @@ async function afficherGalerieModale() {
     console.error("Erreur lors de la récupération des projets :", error);
   }
 }
+
+// Récupérer les éléments du DOM
+const photoUploadInput = document.getElementById('photo-upload');
+const titleInput = document.getElementById('photo-title');
+const categorySelect = document.getElementById('photo-category');
+const validerButton = document.getElementById('valider-button');
+
+// Vérifier que tous les éléments existent avant d'aller plus loin
+if (!photoUploadInput || !titleInput || !categorySelect || !validerButton) {
+  console.error("Un ou plusieurs éléments du formulaire sont introuvables.");
+} else {
+  // Écouteurs d'événements pour la validation du formulaire
+  photoUploadInput.addEventListener('change', toggleValiderButton);
+  titleInput.addEventListener('input', toggleValiderButton);
+  categorySelect.addEventListener('change', toggleValiderButton);
+
+  function fermerModale() {
+    const addPhotoPage = document.getElementById("add-photo-page");
+    const addPhotoOverlay = document.querySelector(".add-photo-overlay");
+  
+    if (addPhotoPage && addPhotoOverlay) {
+      addPhotoPage.style.display = "none";
+      addPhotoOverlay.style.display = "none";
+    }
+  }
+
+  // Ajouter un écouteur d'événement au bouton Valider pour appeler la fonction ajouterProjet()
+  validerButton.addEventListener("click", (event) => {
+    event.preventDefault(); // Empêcher le rechargement par défaut du formulaire
+    ajouterProjet();
+    fermerModale(); // Fermer la modale après l'ajout du projet
+  });
+}
+
+// Fonction de validation du bouton Valider
+function toggleValiderButton() {
+  // Récupérer les valeurs du formulaire
+  const title = titleInput.value.trim();
+  const category = categorySelect.selectedIndex !== -1;
+  const fileSelected = photoUploadInput.files.length > 0;
+
+  // Modifier l'état du bouton Valider
+  if (title && category && fileSelected) {
+    validerButton.style.backgroundColor = "#2f544e";
+    validerButton.style.color = "white";
+    validerButton.style.cursor = "pointer";
+  } else {
+    validerButton.style.backgroundColor = "#b8b8b8";
+    validerButton.style.color = "white";
+    validerButton.style.cursor = "not-allowed";
+  }
+}
+
+// Fonction pour ajouter un projet via l'API et mettre à jour la galerie dynamiquement
+async function ajouterProjet() {
+  // Récupérer les valeurs du formulaire
+  const title = titleInput.value.trim();
+  const categoryId = categorySelect.value;
+  const file = photoUploadInput.files[0];
+
+  // Vérifier que tous les champs sont bien remplis
+  if (!title || !categoryId || !file) {
+    alert("Veuillez remplir tous les champs du formulaire.");
+    return;
+  }
+
+  // Vérifier que le fichier est bien une image .png ou .jpeg
+  const validTypes = ['image/jpeg', 'image/png'];
+  if (!validTypes.includes(file.type)) {
+    alert("Veuillez sélectionner une image au format .jpeg ou .png.");
+    return;
+  }
+
+  // Lire et redimensionner l'image avant l'envoi
+  const reader = new FileReader();
+  reader.onload = async function (e) {
+    const img = new Image();
+    img.src = e.target.result;
+
+    img.onload = async function () {
+      // Créer un canvas pour redimensionner l'image
+      const canvas = document.createElement('canvas');
+      canvas.width = 366.66; // Largeur cible
+      canvas.height = 511.89; // Hauteur cible
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Convertir le canvas en blob pour l'envoi via l'API
+      canvas.toBlob(async (blob) => {
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("category", categoryId);
+        formData.append("image", blob, file.name);
+
+        try {
+          // Envoyer la requête POST à l'API pour ajouter le projet
+          const response = await fetch("http://localhost:5678/api/works", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+            },
+            body: formData
+          });
+
+          if (response.ok) {
+            const nouveauProjet = await response.json();
+            console.log("Projet ajouté avec succès.", nouveauProjet);
+
+            // Ajouter le projet à la galerie de la modale
+            ajouterProjetAuxGaleries(nouveauProjet);
+          } else {
+            console.error("Erreur lors de l'ajout du projet.");
+          }
+        } catch (error) {
+          console.error("Erreur lors de l'ajout du projet :", error);
+        }
+      }, "image/jpeg");
+    };
+  };
+
+  reader.readAsDataURL(file);
+}
+
+// Fonction pour ajouter le projet aux deux galeries dynamiquement
+function ajouterProjetAuxGaleries(projet) {
+  // Créer la figure pour la nouvelle image
+  const figure = document.createElement("figure");
+  figure.style.position = "relative";
+
+  const img = document.createElement("img");
+  img.src = projet.imageUrl;
+  img.alt = projet.title;
+  figure.appendChild(img);
+
+  const figcaption = document.createElement("figcaption");
+  figcaption.textContent = projet.title;
+  figure.appendChild(figcaption);
+
+  // Ajouter le bouton de suppression pour la modale
+  const deleteButton = document.createElement("button");
+  deleteButton.classList.add("delete-button");
+  deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+  figure.appendChild(deleteButton);
+
+  // Ajouter l'événement de suppression dynamique
+  deleteButton.addEventListener("click", async () => {
+    try {
+      const response = await fetch(`http://localhost:5678/api/works/${projet.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+        }
+      });
+
+      if (response.ok) {
+        console.log(`Projet ${projet.id} supprimé avec succès.`);
+        figure.remove();
+      } else {
+        console.error(`Erreur lors de la suppression du projet ${projet.id}.`);
+      }
+    } catch (error) {
+      console.error(`Erreur lors de la suppression du projet ${projet.id} :`, error);
+    }
+  });
+
+  // Ajouter l'élément à la galerie de la modale
+  const modalGalleryContainer = document.querySelector("#photo-gallery-modale");
+  if (modalGalleryContainer) {
+    modalGalleryContainer.appendChild(figure);
+  }
+
+  // Ajouter l'élément à la galerie de la page principale (sans le bouton de suppression)
+  const photoGalleryContainer = document.querySelector("#photo-gallery");
+  if (photoGalleryContainer) {
+    const mainFigure = figure.cloneNode(true);
+    mainFigure.querySelector(".delete-button").remove();
+    photoGalleryContainer.appendChild(mainFigure);
+  }
+}
+
+

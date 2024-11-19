@@ -202,6 +202,7 @@
 .upload-photo-button i {
   font-size: 76px; /* Taille de l'icône */
   color: #b7bfc4;
+  margin-top: 10px;
   margin-bottom: 10px; /* Espacement avec le texte */
 }
 
