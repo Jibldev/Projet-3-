@@ -10,7 +10,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+  background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
   z-index: 1000; /* S'assurer qu'elle apparaît par-dessus le reste */
@@ -31,7 +31,6 @@
   justify-content: flex-start;
   z-index: 1050;
 }
-
 
 /* Titre de la modale */
 .modal-content h2 {
@@ -62,7 +61,7 @@
 }
 
 #photo-gallery-modale figcaption {
-  display: none; /* Masque le titre des images */
+  display: none;
 }
 
 /* Bouton "Ajouter une photo" */
@@ -105,7 +104,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent identique à la première modale */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -129,7 +128,7 @@
 
 .title-container {
   width: 100%;
-  text-align: center; /* Centre le texte horizontalement */
+  text-align: center;
   margin-top: 30px;
   margin-bottom: -20px;
   z-index: 1090;
@@ -150,40 +149,39 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px; /* Espacement entre les éléments */
-  width: 100%; /* Prend toute la largeur disponible */
+  gap: 20px;
+  width: 100%;
   padding: 20px;
 }
 
-
 /* Bouton d'upload photo */
 #photo-upload-container {
-  display: relative; /* Utilise Flexbox pour l'alignement */
-  flex-direction: column; /* Aligne les éléments verticalement */
-  justify-content: center; /* Centre les éléments verticalement */
-  align-items: center; /* Centre les éléments horizontalement */
-  width: 420px; /* Prend toute la largeur disponible */
-  height: 169px; /* Prend toute la hauteur disponible */
-  background-color: #eef6fc; /* Une couleur douce pour le conteneur */
-  position: relative; /* Permet de positionner des éléments relatifs à ce conteneur */
-  overflow: hidden; /* Empêche tout dépassement */
+  display: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 420px;
+  height: 169px;
+  background-color: #eef6fc;
+  position: relative;
+  overflow: hidden;
 }
 
 #photo-upload {
-  position: absolute !important; /* Place l'input sur toute la zone */
-  width: 100% !important; /* Largeur maximale */
-  height: 100% !important; /* Hauteur maximale */
+  position: absolute !important;
+  width: 100% !important;
+  height: 100% !important;
   opacity: 0 !important;
-  cursor: pointer; /* Ajoute un curseur de clic */
+  cursor: pointer;
 }
 
 #photo-upload-label {
-  display: flex; /* Utilisation de Flexbox */
-  flex-direction: column; /* Aligne verticalement */
-  justify-content: center; /* Centre verticalement */
-  align-items: center; /* Centre horizontalement */
-  z-index: 2; /* S'affiche au-dessus du conteneur */
-  cursor: pointer; /* Ajoute un curseur interactif */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  cursor: pointer;
 }
 
 #photo-upload-container img {
@@ -193,77 +191,75 @@
   transform: translate(-50%, -50%);
   max-width: 100%;
   max-height: 100%;
-  object-fit: cover; /* Pour couvrir l'espace sans déformation */
+  object-fit: cover;
 }
-
-
 
 /* Icône à l'intérieur du bouton */
 .upload-photo-button i {
-  font-size: 76px; /* Taille de l'icône */
+  font-size: 76px;
   color: #b7bfc4;
   margin-top: 10px;
-  margin-bottom: 10px; /* Espacement avec le texte */
+  margin-bottom: 10px;
 }
 
 /* Texte principal  */
 .upload-photo-button span {
   font-size: 16px;
-  color: #306685; /* Bleu foncé */
+  color: #306685;
   font-weight: bold;
   background-color: #cbd6dc;
   padding: 7px 30px;
   border-radius: 30px;
   text-align: center;
-  margin-bottom: 5px; /* Espacement avec le texte en dessous */
+  margin-bottom: 5px;
   border: none;
 }
 
 /* Texte d'information (formats acceptés) */
 .upload-photo-button p {
   font-size: 12px;
-  color: gray; /* Couleur du texte d'aide */
-  margin-top: 5px; /* Petit espacement avec le bouton */
+  color: gray;
+  margin-top: 5px;
 }
 
 .form-group {
   display: flex;
-  flex-direction: column; /* Arrange les éléments verticalement */
-  align-items: flex-start; /* Aligne les éléments à gauche */
-  margin-bottom: 20px; /* Espace entre les champs */
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
 }
 
 .form-group p {
-  margin-bottom: 8px; /* Espace entre le titre et l'input */
+  margin-bottom: 8px;
 }
 
 /* Champ texte (Titre) */
 #photo-title {
-  width: 400px; /* Largeur identique au bouton upload */
+  width: 400px;
   height: 30px;
   padding: 10px;
   font-size: 14px;
   border: none;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.178);
   margin-bottom: 20px;
-  background-color: white; /* Couleur de fond blanche */
-  color: black; /* Couleur du texte */
+  background-color: white;
+  color: black;
 }
 
 #photo-title::placeholder {
-  color: rgba(0, 0, 0, 0.6); /* Couleur du placeholder */
+  color: rgba(0, 0, 0, 0.6);
 }
 
 #photo-title:focus {
-  outline: none; /* Supprime le contour par défaut */
-  border: none; /* Supprime la bordure */
-  background-color: white; /* Assure que la couleur de fond reste blanche */
-  color: black; /* Assure que le texte reste noir */
+  outline: none;
+  border: none;
+  background-color: white;
+  color: black;
 }
 
 /* Liste déroulante (Catégorie) */
 #photo-category {
-  width: 420px; /* Largeur identique */
+  width: 420px;
   height: 56px;
   padding: 10px;
   font-size: 14px;
@@ -278,11 +274,9 @@
   border-color: #1d6154;
 }
 
-
-
 /* Bouton Valider */
 #add-photo-form button[type="button"] {
-  background-color: #b8b8b8; /* Couleur grisée initiale */
+  background-color: #b8b8b8;
   color: white;
   font-size: 16px;
   font-family: "Syne", sans-serif;
@@ -291,16 +285,16 @@
   border: none;
   border-radius: 30px;
   margin-top: 20px;
-  cursor: not-allowed; /* Curseur désactivé */
+  cursor: not-allowed;
 }
 
 #add-photo-form button[type="button"].active {
-  background-color: #1d6154; /* Couleur active */
-  cursor: pointer; /* Change le curseur en mode actif */
+  background-color: #1d6154;
+  cursor: pointer;
 }
 
 #add-photo-form button[type="subutton"].active:hover {
-  background-color: #134c3c; /* Couleur au survol */
+  background-color: #134c3c;
 }
 
 #photo-upload {

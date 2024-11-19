@@ -81,7 +81,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Classe Modale
 
-  
   class Modale {
     constructor(modaleElement, boutonFermer, overlayElement = null) {
       this.modaleElement = modaleElement;
@@ -166,13 +165,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     photoUploadInput.value = ""; // Réinitialiser l'input file
     photoUploadLabel.style.display = "flex"; // Réafficher le label d'upload
 
-        // Réafficher le label d'upload
-        photoUploadLabel.style.display = "flex";
+    // Réafficher le label d'upload
+    photoUploadLabel.style.display = "flex";
 
-        // Réinitialiser le champ titre
-        titleInput.value = "";
+    // Réinitialiser le champ titre
+    titleInput.value = "";
 
-            // Réinitialiser le select des catégories
+    // Réinitialiser le select des catégories
     categorySelect.selectedIndex = -1;
 
     // Afficher l'overlay et la deuxième modale
@@ -411,7 +410,7 @@ async function afficherGalerieModale() {
     projets.forEach((projet) => {
       // Créer la figure pour la modale
       const figure = document.createElement("figure");
-      figure.style.position = "relative"; // Pour permettre au bouton de suppression d'être bien positionné
+      figure.style.position = "relative";
 
       const img = document.createElement("img");
       img.src = projet.imageUrl;
@@ -485,24 +484,24 @@ async function afficherGalerieModale() {
 }
 
 // Récupérer les éléments du DOM
-const photoUploadInput = document.getElementById('photo-upload');
-const titleInput = document.getElementById('photo-title');
-const categorySelect = document.getElementById('photo-category');
-const validerButton = document.getElementById('valider-button');
+const photoUploadInput = document.getElementById("photo-upload");
+const titleInput = document.getElementById("photo-title");
+const categorySelect = document.getElementById("photo-category");
+const validerButton = document.getElementById("valider-button");
 
 // Vérifier que tous les éléments existent avant d'aller plus loin
 if (!photoUploadInput || !titleInput || !categorySelect || !validerButton) {
   console.error("Un ou plusieurs éléments du formulaire sont introuvables.");
 } else {
   // Écouteurs d'événements pour la validation du formulaire
-  photoUploadInput.addEventListener('change', toggleValiderButton);
-  titleInput.addEventListener('input', toggleValiderButton);
-  categorySelect.addEventListener('change', toggleValiderButton);
+  photoUploadInput.addEventListener("change", toggleValiderButton);
+  titleInput.addEventListener("input", toggleValiderButton);
+  categorySelect.addEventListener("change", toggleValiderButton);
 
   function fermerModale() {
     const addPhotoPage = document.getElementById("add-photo-page");
     const addPhotoOverlay = document.querySelector(".add-photo-overlay");
-  
+
     if (addPhotoPage && addPhotoOverlay) {
       addPhotoPage.style.display = "none";
       addPhotoOverlay.style.display = "none";
@@ -550,7 +549,7 @@ async function ajouterProjet() {
   }
 
   // Vérifier que le fichier est bien une image .png ou .jpeg
-  const validTypes = ['image/jpeg', 'image/png'];
+  const validTypes = ["image/jpeg", "image/png"];
   if (!validTypes.includes(file.type)) {
     alert("Veuillez sélectionner une image au format .jpeg ou .png.");
     return;
@@ -564,11 +563,11 @@ async function ajouterProjet() {
 
     img.onload = async function () {
       // Créer un canvas pour redimensionner l'image
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = 366.66; // Largeur cible
       canvas.height = 490.88; // Hauteur cible
 
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       // Convertir le canvas en blob pour l'envoi via l'API
@@ -583,9 +582,9 @@ async function ajouterProjet() {
           const response = await fetch("http://localhost:5678/api/works", {
             method: "POST",
             headers: {
-              "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
-            body: formData
+            body: formData,
           });
 
           if (response.ok) {
@@ -631,13 +630,16 @@ function ajouterProjetAuxGaleries(projet) {
   // Ajouter l'événement de suppression dynamique
   deleteButton.addEventListener("click", async () => {
     try {
-      const response = await fetch(`http://localhost:5678/api/works/${projet.id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+      const response = await fetch(
+        `http://localhost:5678/api/works/${projet.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
         }
-      });
+      );
 
       if (response.ok) {
         console.log(`Projet ${projet.id} supprimé avec succès.`);
@@ -646,7 +648,10 @@ function ajouterProjetAuxGaleries(projet) {
         console.error(`Erreur lors de la suppression du projet ${projet.id}.`);
       }
     } catch (error) {
-      console.error(`Erreur lors de la suppression du projet ${projet.id} :`, error);
+      console.error(
+        `Erreur lors de la suppression du projet ${projet.id} :`,
+        error
+      );
     }
   });
 
@@ -664,5 +669,3 @@ function ajouterProjetAuxGaleries(projet) {
     photoGalleryContainer.appendChild(mainFigure);
   }
 }
-
-
