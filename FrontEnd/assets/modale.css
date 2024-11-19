@@ -130,8 +130,8 @@
 .title-container {
   width: 100%;
   text-align: center; /* Centre le texte horizontalement */
-  margin-top: 60px;
-  margin-bottom: 30px;
+  margin-top: 30px;
+  margin-bottom: -20px;
   z-index: 1090;
 }
 
@@ -299,4 +299,17 @@
 
 #photo-upload {
   visibility: hidden;
+}
+
+/* Bouton de suppression sur chaque image de la galerie */
+.delete-button {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 10);
+  border: none;
+  color: white;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 5px;
 }

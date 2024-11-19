@@ -267,6 +267,7 @@ li a:hover {
   justify-content: center;
   gap: 10px;
   padding-bottom: 50px;
+  margin-top: 30px;
 }
 
 .button {

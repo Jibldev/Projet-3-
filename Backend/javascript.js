@@ -49,11 +49,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const filtersContainer = document.getElementById("filters");
   const photoGallery = document.getElementById("photo-gallery");
 
-  // Création de l'overlay pour la deuxième modale
-  const addPhotoOverlay = document.createElement("div");
-  addPhotoOverlay.classList.add("add-photo-overlay");
-  document.body.appendChild(addPhotoOverlay);
-  addPhotoOverlay.style.display = "none"; // Masquer l'overlay au début
+
 
   // Vérification des éléments DOM
   if (
@@ -70,6 +66,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     console.error("Certains éléments du DOM sont introuvables. Vérifiez vos IDs.");
     return;
   }
+
+  // Création de l'overlay pour la deuxième modale
+  const addPhotoOverlay = document.createElement("div");
+  addPhotoOverlay.classList.add("add-photo-overlay");
+  document.body.appendChild(addPhotoOverlay);
+  addPhotoOverlay.style.display = "none"; // Masquer l'overlay au début
 
   // Masquer les modales au chargement de la page
   changerVisibilite([editModal, addPhotoPage], "none");
@@ -234,41 +236,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Fonction pour remplir la galerie de la modale principale avec des images
-  async function afficherGalerieModale() {
-    try {
-      const modalGalleryContainer = document.querySelector("#photo-gallery-modale");
-
-      if (!modalGalleryContainer) {
-        console.error("Conteneur de la galerie modale introuvable.");
-        return;
-      }
-
-      modalGalleryContainer.innerHTML = "";
-
-      let projets = await fetch("http://localhost:5678/api/works").then(
-        (response) => response.json()
-      );
-
-      projets.forEach((projet) => {
-        const figure = document.createElement("figure");
-
-        const img = document.createElement("img");
-        img.src = projet.imageUrl;
-        img.alt = projet.title;
-        figure.appendChild(img);
-
-        const figcaption = document.createElement("figcaption");
-        figcaption.textContent = projet.title;
-        figure.appendChild(figcaption);
-
-        modalGalleryContainer.appendChild(figure);
-      });
-    } catch (error) {
-      console.error("Erreur lors de la récupération des projets :", error);
-    }
-  }
-
   // Initialisation des catégories et projets
   try {
     await afficherBoutonsFiltres();
@@ -277,5 +244,94 @@ document.addEventListener("DOMContentLoaded", async function () {
     console.error("Erreur lors de l'initialisation :", error);
   }
 });
+
+// Suppresion des images 
+
+// Fonction pour remplir la galerie de la modale principale avec des images
+// Fonction pour remplir la galerie de la modale principale avec des images
+async function afficherGalerieModale() {
+  try {
+    const modalGalleryContainer = document.querySelector("#photo-gallery-modale");
+    const photoGalleryContainer = document.querySelector("#photo-gallery"); // Conteneur de la galerie sur la page principale
+
+    if (!modalGalleryContainer) {
+      console.error("Conteneur de la galerie modale introuvable.");
+      return;
+    }
+
+    modalGalleryContainer.innerHTML = "";
+    if (photoGalleryContainer) {
+      photoGalleryContainer.innerHTML = ""; // Vider également le conteneur principal
+    }
+
+    let projets = await fetch("http://localhost:5678/api/works").then(
+      (response) => response.json()
+    );
+
+    projets.forEach((projet) => {
+      // Créer la figure pour la modale
+      const figure = document.createElement("figure");
+      figure.style.position = "relative"; // Pour permettre au bouton de suppression d'être bien positionné
+
+      const img = document.createElement("img");
+      img.src = projet.imageUrl;
+      img.alt = projet.title;
+      figure.appendChild(img);
+
+      const figcaption = document.createElement("figcaption");
+      figcaption.textContent = projet.title;
+      figure.appendChild(figcaption);
+
+      // Ajouter le bouton de suppression
+      const deleteButton = document.createElement("button");
+      deleteButton.classList.add("delete-button");
+      deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+      figure.appendChild(deleteButton);
+
+      // Ajouter un événement de suppression dynamique
+      deleteButton.addEventListener("click", async () => {
+        try {
+          // Envoyer une requête DELETE à l'API pour supprimer le projet
+          const response = await fetch(`http://localhost:5678/api/works/${projet.id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+            }
+          });
+
+          if (response.ok) {
+            console.log(`Projet ${projet.id} supprimé avec succès.`);
+            // Supprimer l'élément du DOM après la suppression
+            figure.remove();
+
+            // Supprimer également l'élément correspondant de la galerie principale
+            const mainGalleryFigure = document.querySelector(`#photo-gallery figure[data-id="${projet.id}"]`);
+            if (mainGalleryFigure) {
+              mainGalleryFigure.remove();
+            }
+          } else {
+            console.error(`Erreur lors de la suppression du projet ${projet.id}.`);
+          }
+        } catch (error) {
+          console.error(`Erreur lors de la suppression du projet ${projet.id} :`, error);
+        }
+      });
+
+      // Ajouter l'élément à la galerie de la modale
+      modalGalleryContainer.appendChild(figure);
+
+      // Ajouter également à la galerie de la page principale
+      if (photoGalleryContainer) {
+        const mainFigure = figure.cloneNode(true); // Cloner la figure
+        mainFigure.querySelector(".delete-button").remove(); // Supprimer le bouton de suppression pour la galerie principale
+        mainFigure.dataset.id = projet.id; // Ajouter un data-id pour faciliter la suppression
+        photoGalleryContainer.appendChild(mainFigure);
+      }
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des projets :", error);
+  }
+}
 
 
