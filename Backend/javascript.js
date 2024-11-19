@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           // Créer un canvas pour redimensionner l'image
           const canvas = document.createElement("canvas");
           canvas.width = 366.66; // Largeur cible
-          canvas.height = 511.89; // Hauteur cible
+          canvas.height = 490.88; // Hauteur cible
 
           const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -566,7 +566,7 @@ async function ajouterProjet() {
       // Créer un canvas pour redimensionner l'image
       const canvas = document.createElement('canvas');
       canvas.width = 366.66; // Largeur cible
-      canvas.height = 511.89; // Hauteur cible
+      canvas.height = 490.88; // Hauteur cible
 
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
