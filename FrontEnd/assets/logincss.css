@@ -143,3 +143,12 @@ footer nav ul {
 	margin-top: 20em;
 	margin-right: -5em;
 }
+
+a.custom-link {
+	text-decoration: none;
+	color: black;
+}
+
+a.custom-link:hover{
+	color: #B1663C;
+}

@@ -189,6 +189,10 @@ h2 {
   gap: 8px; /* Espace entre le titre et le bouton */
 }
 
+.title-container-padding{
+  padding-bottom: 30px;
+}
+
 .edit-button {
   visibility: hidden;
   background: none;
@@ -346,3 +350,4 @@ footer nav ul {
   justify-content: flex-end;
   margin: 2em;
 }
+

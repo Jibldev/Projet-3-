@@ -37,6 +37,20 @@ document.addEventListener("DOMContentLoaded", () => {
   updateUI();
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const filtersContainer = document.querySelector(".Boutons"); 
+  const titleContainer = document.querySelector(".title-container"); 
+  const authToken = localStorage.getItem("authToken"); 
+
+  if (authToken) {
+      filtersContainer.style.display = "none";
+      titleContainer.classList.add("title-container-padding");
+  } else {
+      filtersContainer.style.display = "flex";
+      titleContainer.classList.remove("title-container-margin");
+  }
+});
+
 document.addEventListener("DOMContentLoaded", async function () {
   // Récupération des éléments DOM
   const editModal = document.getElementById("edit-modal");
@@ -95,7 +109,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (!this.overlayElement) {
         this.modaleElement.addEventListener("click", (event) => {
           if (event.target === this.modaleElement) {
-            console.log("Clic en dehors de la modale - Fermeture");
             this.fermer();
           }
         });
@@ -105,7 +118,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (this.overlayElement) {
         this.overlayElement.addEventListener("click", (event) => {
           if (event.target === this.overlayElement) {
-            console.log("Clic sur l'overlay - Fermeture");
             this.fermer();
           }
         });
@@ -150,7 +162,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Ouverture de la deuxième modale (ajouter une photo)
   openAddPhotoButton.addEventListener("click", () => {
-    console.log("Bouton Ajouter une photo cliqué");
 
     // Ajouter la modale "Ajouter une photo" à l'overlay si ce n'est pas déjà fait
     if (!addPhotoOverlay.contains(addPhotoPage)) {
@@ -184,7 +195,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Retour à la galerie depuis la deuxième modale
   backToGalleryButton.addEventListener("click", () => {
-    console.log("Bouton Retour cliqué");
     modaleAjoutPhoto.fermer(); // Masquer la deuxième modale
     modaleEdition.ouvrir(); // Réafficher la première modale
     addPhotoOverlay.style.display = "none"; // Masquer l'overlay
@@ -213,6 +223,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (!validTypes.includes(file.type)) {
         alert("Veuillez sélectionner une image au format .jpeg ou .png.");
         return;
+      }
+
+      const maxSize = 4 * 1024 * 1024; // 4 Mo en octets
+      if (file && file.size > maxSize) {
+        alert("La taille de l'image ne doit pas dépasser 4 Mo.");
+        photoUploadInput.value = ''; // Réinitialiser le champ d'upload
       }
 
       // Lire le fichier sélectionné
@@ -305,7 +321,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     try {
       const categories = await obtenirCategories();
       const boutonTous = document.createElement("button");
-      boutonTous.classList.add("button");
+      boutonTous.classList.add("button", "active"); // Ajouter la classe active par défaut
       boutonTous.setAttribute("data-category", "all");
       boutonTous.textContent = "Tous";
       boutonTous.addEventListener("click", () => {
@@ -443,7 +459,6 @@ async function afficherGalerieModale() {
           );
 
           if (response.ok) {
-            console.log(`Projet ${projet.id} supprimé avec succès.`);
             // Supprimer l'élément du DOM après la suppression
             figure.remove();
 
@@ -589,7 +604,6 @@ async function ajouterProjet() {
 
           if (response.ok) {
             const nouveauProjet = await response.json();
-            console.log("Projet ajouté avec succès.", nouveauProjet);
 
             // Ajouter le projet à la galerie de la modale
             ajouterProjetAuxGaleries(nouveauProjet);
@@ -626,34 +640,6 @@ function ajouterProjetAuxGaleries(projet) {
   deleteButton.classList.add("delete-button");
   deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
   figure.appendChild(deleteButton);
-
-  // Ajouter l'événement de suppression dynamique
-  deleteButton.addEventListener("click", async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:5678/api/works/${projet.id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        console.log(`Projet ${projet.id} supprimé avec succès.`);
-        figure.remove();
-      } else {
-        console.error(`Erreur lors de la suppression du projet ${projet.id}.`);
-      }
-    } catch (error) {
-      console.error(
-        `Erreur lors de la suppression du projet ${projet.id} :`,
-        error
-      );
-    }
-  });
 
   // Ajouter l'élément à la galerie de la modale
   const modalGalleryContainer = document.querySelector("#photo-gallery-modale");

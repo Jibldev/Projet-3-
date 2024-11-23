@@ -21,12 +21,10 @@ document.getElementById("connexion").addEventListener("click", async function(ev
       // Stocker le token d'authentification (ou autre identifiant) dans le localStorage
       localStorage.setItem("authToken", data.token); // Assurez-vous que l'API renvoie un token
       window.location.href = "index.html"; // Rediriger vers la page principale
-      console.log("Success")
     } else {
       alert ("Identifiant ou mot de passe incorrect") // Erreur identifiant ou mot de passe
     }
   } catch (error) {
-    console.error("Erreur lors de la connexion :", error);
     alert ("Incorrect") // Erreur serveur
   }
 });
